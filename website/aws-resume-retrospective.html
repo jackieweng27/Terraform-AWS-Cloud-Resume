@@ -168,7 +168,7 @@ resource "aws_s3_object" "index_html" {
 }</b></blockquote></pre>
 							The above code essentially creates a secure static website hosting infrastructure by:
 							<ul><blockquote><li>Creating an S3 bucket with a configurable name</li>
-							<li>Setting up a bucket policy that only allows CloudFront to access the bucket's contents through an Origin Access Identity and resource policy</li>
+							<li>Setting up a bucket/resource policy that only allows CloudFront to access the bucket's contents through an Origin Access Identity</li>
 							<li>Uploading the index.html file with proper content type and change detection</li></blockquote></ul>
 
 							Next, uploading the rest of my file types (Javascript, CSS, .jpg/.png images, etc.) followed a similar syntax to the index.html, with a few more examples provided below:
@@ -278,7 +278,7 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
 }
 </pre></blockquote></b>
 							<p>This code successfully:
-								<ul><blockquote><li>Created a CloudFront distribution with secure S3 access through an Origin Access Identity, as previously specified in the S3 bucket's resource policy
+								<ul><blockquote><li>Created a CloudFront distribution with secure S3 access through an Origin Access Identity
 								<li>Configured caching behaviors and HTTPS enforcement</li>
 								<li>Set up basic distribution settings with IPv6 support</li></blockquote></ul>
 							However, although my Cloudfront deployment referenced an ACM certificate, it lacked the supporting infrastructure for SSL/TLS certification. This meant that I had to add IaC that would further configure my ACM certificate.
