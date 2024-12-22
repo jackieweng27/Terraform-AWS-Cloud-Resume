@@ -3525,10 +3525,10 @@ input, select, textarea {
 		-webkit-justify-content: -webkit-flex-end;
 		-ms-justify-content: -ms-flex-end;
 		justify-content: flex-end;
-		-moz-transition: opacity 0.60s ease, -moz-transform 0.60s ease;
-		-webkit-transition: opacity 0.60s ease, -webkit-transform 0.60s ease;
-		-ms-transition: opacity 0.60s ease, -ms-transform 0.60s ease;
-		transition: opacity 0.60s ease, transform 0.60s ease;
+		-moz-transition: opacity 0.20s ease, -moz-transform 0.20s ease;
+		-webkit-transition: opacity 0.20s ease, -webkit-transform 0.20s ease;
+		-ms-transition: opacity 0.20s ease, -ms-transform 0.20s ease;
+		transition: opacity 0.20s ease, transform 0.20s ease;
 		position: relative;
 		cursor: default;
 		text-align: center;

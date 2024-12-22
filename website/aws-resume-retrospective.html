@@ -576,7 +576,7 @@ This marked the end of Phase 4, and the full completion of my website's IaC. Wit
 
 Although applying local changes to my website via Terraform seemed to be sufficient, Github served as an extra backup for version control. This last phase aimed to push my site's modifications through Github Actions, thereby dynamically uploading my site's files to S3.
 
-<br><br>To do so, I created a folder path named ".github\workflows" in the root directory of my website. Then, I created a file called "CI_CD.yml" and housed it inside this new directory. "CI_CD.yml" contained the configuration for Github Actions, in particular a <a href="https://github.com/jakejarvis/s3-sync-action" target="_blank">useful open-source Action by Jake Jarvis </a>that syncs any directory to a remote S3 bucket.<br><br>  
+<br><br>To do so, I created a folder path named ".github\workflows" in the root directory of my website. Then, I created a file called "CI_CD.yml" and housed it inside this new directory. "CI_CD.yml" contained the configuration for Github Actions, in particular a <a href="https://github.com/jakejarvis/s3-sync-action" target="_blank">useful open-source Action by Jake Jarvis</a> that syncs any directory to a remote S3 bucket.<br><br>  
 
 The following is the code I placed in "CI_CD.yml":
 <b><blockquote><pre>
