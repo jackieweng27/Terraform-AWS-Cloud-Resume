@@ -168,7 +168,7 @@ resource "aws_s3_object" "index_html" {
 }</b></blockquote></pre>
 							The above code essentially creates a secure static website hosting infrastructure by:
 							<ul><blockquote><li>Creating an S3 bucket with a configurable name</li>
-							<li>Setting up a bucket policy that only allows CloudFront to access the bucket's contents through an Origin Access Identity</li>
+							<li>Setting up a bucket policy that only allows CloudFront to access the bucket's contents through an Origin Access Identity and resource policy</li>
 							<li>Uploading the index.html file with proper content type and change detection</li></blockquote></ul>
 
 							Next, uploading the rest of my file types (Javascript, CSS, .jpg/.png images, etc.) followed a similar syntax to the index.html, with a few more examples provided below:
