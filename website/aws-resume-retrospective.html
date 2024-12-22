@@ -568,7 +568,7 @@ This JavaScript code:
     <li>Checks for different response formats</li>
     <li>Falls back to "0" if an error occurs</li>
     <li>Only executes if the counter element exists on the page</li></ul></blockquote>
-Overall, the code worked in conjunction with the Lambda function defined in the Terraform configuration to track and display website visits.
+Overall, the code worked in conjunction with the Lambda function defined in the Terraform configuration to track and display website visits. Optionally, CloudWatch alarms can be set to alert about errors, throttling, latency, or other metrics regarding the Lambda function's usage.
 <br><br>
 This marked the end of Phase 4, and the full completion of my website's IaC. With the entire website Terraformed, I could finalize my project with CI/CD (continuous integration/continuous deployment) via Github Actions.
 <br><br>
