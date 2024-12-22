@@ -1,0 +1,188 @@
+<!-- aws-resume-retrospective.html -->
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>A Bytesize Article</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="fade-in">
+
+				<!-- Header -->
+					<header id="header">
+						<a class="logo">Bytesize Bits</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Resume</a></li>
+							<li><a href="projects.html">Projects</a></li>
+							<li class="active"><a href="bytesizebits.html">Bytesize Bits</a></li>
+						</ul>
+						<ul class="icons">
+							<ul class="icons">
+								<li><a href="mailto:jackietech@duck.com" class="icon fa-envelope fa-2x"><span class="label">Email</span></a></li>	
+								<li><a href="https://www.linkedin.com/in/jackie-w-28bb6817b?trk=public_profile_browsemap" target="_blank" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/jackieweng27" target="_blank" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>  
+						</ul>
+					</nav>
+                
+					<!-- Main -->
+					<div id="main">
+						<article>
+							<header class="major">
+								<span class="date">December 15, 2024</span>
+								<h1>Cloud Chronicles: The FTX Fiasco</h1>
+								
+								<!-- Article Footer with centered content -->
+								<div class="article-footer">
+									<div class="author-info">
+										<img src="images/author-profile-pic.jpg" alt="Author" class="author-pic">
+										<div class="article-meta">
+											<span class="author-name">By Jackie Weng</span>
+											<span class="read-time">
+												<i class="fa fa-clock"></i> 5 minute read • Published 3:45 PM CST
+											</span>
+										</div>
+									</div>
+								</div>
+							</header>
+
+							<img src="images/FTX-bankruptcy.png" alt="Description" style="display: block; margin-left: auto; margin-right: auto; width: 100%;">
+							<br>
+
+							<div class="article-content">
+							<!-- Introduction -->
+							<p>In what stands as one of the most catastrophic failures in both cryptocurrency and cloud infrastructure history, FTX's collapse serves as a stark reminder of how poor cloud practices can accelerate a company's downfall.</p>
+
+							<!-- Main sections with headers -->
+							<h2>The Infrastructure Nightmare</h2>
+
+							<p>On March 28th, 2024, FTX's previous CEO, Sam Bankman-Fried, was finally sentenced to 25 years in prison. Ordered to forfeit $11 billion, he had been convicted on multiple counts of fraud related to his management of the FTX companies.</p>
+
+							<p>So, what had happened behind the scenes? When John J. Ray III took over as CEO during FTX's bankruptcy proceedings, what he discovered was beyond concerning. The company, valued at tens of billions billion at its peak, had no documentation of their cloud architecture. Security protocols were virtually non-existent, and access controls were managed through shared credentials stored in an unsecured group chat.</p>
+							
+							<p>Customer funds, corporate assets, and critical data were all managed through a tangled web of poorly configured cloud services. The lack of proper segregation between development and production environments meant that anyone with access could potentially modify live trading systems. Aside from this, the John J. Ray's First Interim Report revealed a plethora of other cloud security flaws.</p>
+
+
+							<h2>Retributions from the Report</h2>
+							<p>The following cloud security oversights come primarily from <a href="FirstInterimReport.pdf" target="_blank">John J. Ray III’s First Interim Report</a>, and are cited by page number and/or footnotes:</p>
+							1.) Lack of Proper Asset Segregation 
+							<ul><blockquote>
+								<li>FTX.com, FTX.US, and Alameda shared a single AWS account, violating fundamental security principles of segmentation (p. 33). The shared infrastructure meant a single compromise could expose all entities' assets.</li>
+								<li>Failure to maintain separate collaboration platforms and password vaults for different entities increased security risks (p. 33, footnote 34).</li>
+								<li>The company failed to implement appropriate network segmentation to contain potential breaches and limit the impact of unauthorized access (p. 33, footnote 34).</li>
+							</blockquote></ul>
+							2.) Access controls
+							<ul><blockquote>
+								<li>Over a dozen people had access to central omnibus wallets containing billions in crypto assets (p. 30).</li>
+								<li>Failed to implement "least privilege" principle for system access (p. 30).</li>
+								<li>Did not enforce multi-factor authentication for critical services like Google Workspace and 1Password (p. 31). This lack of MFA was particularly ironic given that FTX recommended customers use MFA on their own accounts.</li>
+								<li>FTX Group generally did not use SSO, an authentication scheme used to manage user access centrally. Without SSO, the company couldn't effectively manage or revoke user access, enforce MFA, or prevent users from having multiple accounts with separate passwords (p. 32). </li>
+							</blockquote></ul>
+							3.) Monitoring and detection
+							<ul><blockquote>
+							<li>The company did not institute any basic mechanism to be alerted to "root" login to its AWS account (p. 34).</li>
+							<li>Amazon GuardDuty, an AWS feature that supports threat detection, was not enabled at all on FTX.com (p. 34, footnote 36).</li>
+							<li>VPC flow logs that can capture IP traffic information were only enabled to log rejected traffic, and only in some networks (p. 34, footnote 36).</li>
+							<li>To manage inbound internet traffic on a key server, the FTX Group used a version of software that was nearly four years out of date, leaving the server exposed to known vulnerabilities (p. 35).</li>
+							<li>As a result from many of the above, the FTX Group did not learn of the November 2022 Breach until the Debtors' restructuring advisor alerted employees after observing suspicious transfers via Twitter and other public sources (p. 34). </li>
+							</blockquote></ul>
+							4. Security and documentation
+							<ul><blockquote>
+							<li>Absence of comprehensive organizational charts prior to late 2021 (pp. 8-9).</li>
+							<li>No written plans, processes, or procedures explaining the architecture or operation of computing environment or storage of crypto assets (p. 38).</li>
+							<li>Lacked tracking of employee workstations, software application servers, and business data. Failed to maintain inventory of third-party cloud service. (p. 35)</li>
+							<li>IT professional's attempts to create device inventory were undermined by management's non-cooperation. Senior management failed to identify electronic devices they were using despite requests (p. 35).</li>
+							<li>Had to analyze financial records and search through employee communications just to understand the scope of services used (p. 35).</li>
+							<li>The FTX Group had no comprehensive record from which it could even identify critical assets and services, including employee workstations, software application servers, business data, and third-party cloud services (p. 35).</li>
+							</blockquote></ul>
+							5.) Code Security
+							<ul><blockquote>
+							<li>Stored sensitive data including private keys and API keys in unencrypted files (p. 36).</li>
+							<li>No effective process for securely introducing, updating, or patching software (p. 37).</li>
+							<li>Minimal code review and testing procedures (p. 37).</li>
+							<li>Hundreds of secrets, including passwords for crypto wallet nodes and API keys for exchanges, were kept in source code repositories with wide accessibility (p. 36).</li>
+							<li>Absence of procedures like scanning to continually ensure the integrity of code running on FTX Group servers (p. 37).</li>
+							<li>Inadequate review, testing, and deployment practices failed to ensure code was functioning as expected and free of vulnerabilities (p. 37).</li>
+							<li>A senior developer deleted a file containing secrets from a repository but failed to remove it from the code history. This practice went against GitHub's recommended practices, leaving the file exposed to anyone accessing the code repository (p. 36, footnote 41).</li>
+							<li>Absence of a structured approach to incorporate security requirements into the system development lifecycle (p. 37, footnote 42).</li>
+							</blockquote></ul>
+
+							<br>
+							<h2>Lessons from the Ashes</h2>
+							
+							<p>The culmination of all these endless cloud security malpractices are best represented by John J. Ray's lamentation during the filing with the District of Delaware Bankruptcy Court:</p>
+
+							<blockquote>
+								"I have over 40 years of legal and restructuring experience... Never in my career have I seen such a complete failure of corporate controls and such a complete absence of trustworthy financial information." - John Ray III, CEO.
+							</blockquote>							
+
+							<p>As of this moment, a number of other senior-level employees of the company, including Bankman-Fried’s co-founders, are continuing to cooperate with the Department of Justice. Most of the FTX funds have not been recovered, and forensic analysis of FTX is ongoing.</p>
+
+							<p>The FTX fiasco teaches us that even in the fast-paced world of cryptocurrency, fundamental cloud practices cannot be ignored. Proper infrastructure management isn't just about keeping systems running—it's about protecting billions in customer assets and maintaining the trust that's essential to any financial platform.</p>
+
+							<p>As the dust continues to settle, one thing becomes crystal clear: in the world of cloud computing, there are no shortcuts to success. The price of ignoring basic cloud practices isn't just technical debt—it's potentially criminal liability.</p>
+						</div>
+        
+<h2>Works Cited</h2>
+<b><pre>
+Kroll. (2023, April 9). FTX Trading Ltd. (Notice of 	
+	Filing First Interim Report). FTX Trading Ltd. (Case No. 22-11068). https://restructuring.ra.kroll.com/FTX/ </pre></b>
+
+							<br>
+
+							<ul class="actions special">
+								<li><a href="bytesizebits.html" class="button large">Back to Bytesize Bits</a></li>
+							</ul>
+						</article>
+					</div>
+
+
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<ul class="iconsfooter">
+								<li><a href="mailto:jackietech@duck.com" class="icon fa-envelope fa-2x"><span class="label">Email</span></a></li>	
+								<li><a href="https://www.linkedin.com/in/jackie-w-28bb6817b?trk=public_profile_browsemap" target="_blank" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/jackieweng27" target="_blank" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+							</ul>  
+							<b><p style="text-align:center; font-size:16px">Unless otherwise noted, the content of this site is licensed under the <br>
+							<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).</a></p></b>
+
+						</section>
+						<!-- Scroll to Top Button -->
+						<button id="scrollBtn" title="Go to top">
+							<svg viewBox="0 0 24 24" width="24" height="24">
+								<path d="M12 3.5l-6 6h12z" fill="black"/>  <!-- Triangle filled black -->
+								<path d="M12 7.5v13" stroke="black" stroke-width="2" fill="none"/>  <!-- Stem -->
+							</svg>
+						</button>												
+					</footer>
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
+
+			

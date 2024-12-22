@@ -1,0 +1,686 @@
+<!-- aws-resume-retrospective.html -->
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>An AWS Cloud Resume Retrospective</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="fade-in">
+
+				<!-- Header -->
+					<header id="header">
+						<a class="logo">Only Practice Makes Perfect</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Resume</a></li>
+							<li class="active"><a href="projects.html">Projects</a></li>
+							<li><a href="bytesizebits.html">Bytesize Bits</a></li>
+						</ul>
+						<ul class="icons">
+							<ul class="icons">
+								<li><a href="mailto:jackietech@duck.com" class="icon fa-envelope fa-2x"><span class="label">Email</span></a></li>	
+								<li><a href="https://www.linkedin.com/in/jackie-w-28bb6817b?trk=public_profile_browsemap" target="_blank" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/jackieweng27" target="_blank" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>  
+						</ul>
+					</nav>
+                
+					<!-- Main -->
+					<div id="main">
+						<article>
+							<header class="major">
+								<span class="date">December 9, 2024</span>
+								<h1>An AWS Cloud Resume Retrospective</h1>
+								
+								<!-- Article Footer with centered content -->
+								<div class="article-footer">
+									<div class="author-info">
+										<img src="images/author-profile-pic.jpg" alt="Author" class="author-pic">
+										<div class="article-meta">
+											<span class="author-name">By Jackie Weng</span>
+											<span class="read-time">
+												<i class="fa fa-clock"></i> 15 minute read • Published 2:48 PM CST
+											</span>
+										</div>
+									</div>
+								</div>
+							</header>
+
+							<div class="article-content">
+							<!-- Introduction -->
+							<p>As of writing this article, the operational costs incurred from my cloud resume website total to a meager 55 cents per month. That's a nickel from taxes, and two quarters from the monthly Route53 fee of my single hosted zone. This is in stark contrast to the annual fees of popular website hosting—e.g., ~$96 via the cheaper Wordpress, and ~$276 via the pricier Squarespace.</p> 
+
+							<img src="images/savings.png" alt="Description" style="display: block; margin-left: auto; margin-right: auto; width: 50%;">
+							<br>
+
+							<p>
+							Not only that, but I now have full control over my website's entire frontend/backend. This means <i>everything</i>—its SSL certification from Amazon's ACM, its current and future records via Route53, its Cloudfront CDN distribution, its entire infrastructure via Terraform, etc. Backend notwithstanding, I
+							have also come to discover that the basic plans of some paid website services don't even let you customize your CSS and Javascript frontend!
+							</p>
+
+							<p>With this being the case, I will now break down the process of developing this website using only AWS cloud services. These subsequent sections will correspond with this cloud architecture diagram I created using <a href="https://excalidraw.com" target="_blank">excalidraw.com</a>:</p>
+
+							<img src="images/RESUME_CLOUD_DIAGRAM.png" alt="Description" style="display: block; margin-left: auto; margin-right: auto; width: 100%;">
+							<br>
+
+							<!-- Main sections with headers -->
+							<h2>The Importance of Infrastructure as Code</h2>
+							<p>Originally, every single one of my website's AWS services were configured manually via clicking around in the AWS console. Not only is this practice tedious, but it also leads to innumerable risks. For example, as echoed by Forrest Brazeal (2024), the creator of the Cloud Resume Challenge...</p>
+
+							
+							<ul>
+								<blockquote>
+								<li><i>What would happen if I accidentally deleted the underlying infrastructure for my cloud resume?</li>
+								<li>What if I wanted to change to a different cloud provider, such as Google Cloud or Microsoft Azure?</li>
+								<li>How could I reproduce my resume easily if I had to delete it or move it in the future?</li>
+								<li>Since I used a browser-based console, I'd already forgotten the settings and steps to configure my infrastructure resources. What settings did I make for my DNS? What name did my storage bucket have?</i></li>
+								</blockquote>
+							</ul>
+
+							<p>As a result, I had to extend and convert my project into IaC (Infrastructure as Code). As one might guess, IaC involves capturing and deploying the settings required for your specific infrastructure in a codified manner. There are several IaC services for AWS, but I chose to use the popular Terraform by Hashicorp for my website's deployment.
+							</p>
+
+							<h2>Phase 1: Frontend First</h2>
+							<p>For the sake of convenience, brevity, and intent, I spent several days customizing and adding Javascript/CSS/HTML elements to a premade template. I personally obtained my template from <a href="https://html5up.com" target="_blank">html5up.net</a>, but I've witnessed many other projects that have utilized <a href="https://styleshout.com" target="_blank">styleshout.com</a>. This was done to streamline my process and save time. After all, although I found many aspects of UI/UX design and web development fun, I wanted to spend more time on implementing the actual cloud services.</p> 
+							
+							<p>After creating a folder called "website", and housing my finished stylesheets/javascript/html inside, I could finally begin to deploy my website via Terraform.
+							
+							My Terraform directory structure consisted of four files: 
+							
+							<ul>
+								<blockquote>
+								<li><b><mark style="background-color: plum;"> main.tf</mark></b>: This file contains the core infrastructure configuration, including:
+									<ul><li>Lambda function setup with Python runtime and CloudWatch logging</li>
+									<li>IAM roles and policies for Lambda and DynamoDB access</li>
+									<li>S3 bucket configuration for static website hosting</li>
+									<li>CloudFront distribution with HTTPS and caching settings</li>
+									<li>Resource configurations for HTML, CSS, JavaScript, images, and SASS files</li>
+									<li>Security policies for S3 bucket access through CloudFront</li>
+									</ul></li>
+								<li><b><mark style="background-color: plum;">variables.tf</mark></b>: This file declares the variables used in main.tf, such as bucket_name, website_index_document, and other configurable values that can be changed without modifying the main configuration.</li>
+								<li><b><mark style="background-color: plum;">outputs.tf</mark></b>: This file defines what information should be displayed after applying the Terraform configuration, such as the CloudFront distribution domain name, Lambda function URL, or S3 bucket website endpoint. This file can be helpful for troubleshooting problems during the deployment.</li>
+								<li><b><mark style="background-color: plum;">providers.tf</mark></b>: This file defines and configures the cloud providers and their settings that Terraform will use to create infrastructure. For this project, it only contains my AWS provider.</li>
+								</blockquote>
+							</ul>
+							
+
+							Since I mostly clumped my IaC into a single main.tf file, I made sure to include comments in the code that denoted which IaC corresponded to which cloud service. Additionally, I only produced my IaC after thoroughly perusing the extensive, detailed Terraform AWS documentation available at <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs" target="_blank">https://registry.terraform.io/providers/hashicorp/aws/latest/docs</a>.</p> 
+
+							
+							<h2>Phase 2: Creating a Static Website in S3 via Terraform</h2>
+
+							<p>An S3 bucket is a container for storing data in Amazon Web Services' (AWS) Simple Storage Service (S3). S3 buckets are similar to folders, and can be used to store, retrieve, back up, and access objects. However, storage notwithstanding, hosting a static website via an S3 bucket is one of the cheapest and most lightweight site hosting options available. Therefore, my first IaC would have to initialize and populate an S3 bucket with my website's contents/files. 
+							</p>
+							<p></p>
+							Here is my commented code for my S3 bucket's initial IaC deployment:
+							
+<b><blockquote><pre>
+<mark style="background-color: plum;"># Create an S3 bucket for hosting the static website</mark>
+resource "aws_s3_bucket" "website_bucket" {
+    bucket = var.bucket_name
+}
+<mark style="background-color: plum;"># Define the bucket policy to control access to the S3 bucket</mark>
+resource "aws_s3_bucket_policy" "website_bucket_policy" {
+    <mark style="background-color: plum;"># Reference the ID of the bucket we created above</mark>
+    bucket = aws_s3_bucket.website_bucket.id
+    <mark style="background-color: plum;"># Create an IAM policy document using jsonencode function</mark>
+    policy = jsonencode({
+    <mark style="background-color: plum;"># Specify the policy version</mark>
+    Version = "2012-10-17"
+    Statement = [
+        {
+        <mark style="background-color: plum;"># Allow GetObject action (downloading/reading files)</mark>
+        Action    = "s3:GetObject"
+        <mark style="background-color: plum;"># Allow the action specified above</mark>
+        Effect    = "Allow"
+        <mark style="background-color: plum;"># Apply to all objects in the bucket using wildcard</mark>
+        Resource  = "${aws_s3_bucket.website_bucket.arn}/*"
+        <mark style="background-color: plum;"># Specify who can access (CloudFront Origin Access Identity)</mark>
+        Principal = {
+            CanonicalUser = aws_cloudfront_origin_access_identity.origin_access_identity.s3_canonical_user_id
+        }
+        }
+    ]
+    })
+}
+
+<mark style="background-color: plum;"># Upload the index.html file to the S3 bucket</mark>
+resource "aws_s3_object" "index_html" {
+    <mark style="background-color: plum;"># Specify which bucket to upload to</mark>
+    bucket = aws_s3_bucket.website_bucket.id
+    <mark style="background-color: plum;"># Set the name/path of the file in the bucket</mark>
+    key = "index.html"
+    <mark style="background-color: plum;"># Specify the local file to upload</mark>
+    source = "website/index.html"
+    <mark style="background-color: plum;"># Add MD5 hash for change detection</mark>
+    etag = filemd5("website/index.html")
+    <mark style="background-color: plum;"># Set the correct content type for HTML files</mark>
+    content_type = "text/html"
+}</b></blockquote></pre>
+							The above code essentially creates a secure static website hosting infrastructure by:
+							<ul><blockquote><li>Creating an S3 bucket with a configurable name</li>
+							<li>Setting up a bucket policy that only allows CloudFront to access the bucket's contents through an Origin Access Identity</li>
+							<li>Uploading the index.html file with proper content type and change detection</li></blockquote></ul>
+
+							Next, uploading the rest of my file types (Javascript, CSS, .jpg/.png images, etc.) followed a similar syntax to the index.html, with a few more examples provided below:
+<b><blockquote><pre><mark style="background-color: plum;"># Uploading images in the images folder</mark>
+resource "aws_s3_object" "images" {
+    for_each = fileset("website/images", "*.{jpg,png}")
+    bucket = aws_s3_bucket.website_bucket.id
+    key = "images/${each.value}"
+    source = "website/images/${each.value}"
+    etag = filemd5("website/images/${each.value}")
+    content_type = endswith(each.value, ".jpg") ? "image/jpeg" : "image/png"
+}
+<mark style="background-color: plum;"># Uploading JavaScript files</mark>
+resource "aws_s3_object" "js_files" {
+    for_each = fileset("website/assets/js", "*.js")
+    bucket = aws_s3_bucket.website_bucket.id
+    key = "assets/js/${each.value}"
+    source = "website/assets/js/${each.value}"
+    etag = filemd5("website/assets/js/${each.value}")
+    content_type = "application/javascript"
+}
+</pre></blockquote></b>
+							Finally, once I completed Phases 1 to 2, and successfully applied the Terraform plan, my basic static website's IaC worked! The AWS S3 bucket populated itself automatically with the correct contents and configurations.<br> 
+
+							<br>
+							<h2>Phase 3: Codifying a Secure and Certified Cloudfront Distribution</h2>
+							<p>For Phase 3, I needed to produce the IaC for my website's Cloudfront distribution, and likewise, its SSL certificate assigned from Amazon's ACM. Cloudfront is Amazon's global content delivery network, which enabled my web content to be delivered with less latency via edge locations, further cost-effectiveness, and more security. ACM refers to AWS Certificate Manager, which enabled me to provision, manage, and deploy the custom SSL certificate for my website's domain. 
+								
+							I will also note that I'd already prepurchased my domain name via Route53, hence the aliases in my code. This was also a necessary prerequisite to obtain an ACM-issued SSL certificate that corresponded with my domain's CNAME records.</p>
+
+							The following is my commented code for my Cloudfront IaC deployment:
+<b><blockquote><pre>
+<mark style="background-color: plum;"># Create a CloudFront Origin Access Identity to securely access S3 content</mark>
+resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
+	comment = "Origin Access Identity for static website"
+}
+<mark style="background-color: plum;"># Configure the CloudFront distribution</mark>
+resource "aws_cloudfront_distribution" "cloudfront_distribution" {
+    <mark style="background-color: plum;"># Define the origin (S3 bucket) configuration</mark>
+    origin {
+    <mark style="background-color: plum;"># Use the S3 bucket's regional domain name</mark>
+    domain_name = aws_s3_bucket.website_bucket.bucket_regional_domain_name
+    <mark style="background-color: plum;"># Unique identifier for this origin</mark>
+    origin_id = var.bucket_name
+
+    <mark style="background-color: plum;"># Configure S3 specific settings with OAI</mark>
+    s3_origin_config {
+        origin_access_identity = aws_cloudfront_origin_access_identity.
+        origin_access_identity.cloudfront_access_identity_path
+    }
+    }
+    <mark style="background-color: plum;"># Enable the distribution and IPv6</mark>
+    enabled = true
+    is_ipv6_enabled = true
+    <mark style="background-color: plum;"># Set the default page (e.g., index.html)</mark>
+    default_root_object = var.website_index_document
+
+    <mark style="background-color: plum;"># Configure caching behavior and security settings</mark>
+    default_cache_behavior {
+    <mark style="background-color: plum;"># Define allowed HTTP methods</mark>
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    <mark style="background-color: plum;"># Specify which methods to cache</mark>
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = var.bucket_name
+    
+    <mark style="background-color: plum;"># Configure request forwarding</mark>
+    forwarded_values {
+        query_string = false
+        cookies {
+        forward = "none"
+        }
+    }
+
+    <mark style="background-color: plum;"># Force HTTPS for all requests</mark>
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+    }
+
+    <mark style="background-color: plum;"># Configure SSL/TLS certificate settings</mark>
+    viewer_certificate {
+    acm_certificate_arn = aws_acm_certificate.cert.arn
+    ssl_support_method = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+    }
+
+    <mark style="background-color: plum;"># Set geographic restrictions (none in this case)</mark>
+    restrictions {
+    geo_restriction {
+        restriction_type = "none"
+    }
+    }
+
+    <mark style="background-color: plum;"># Add tags for resource management</mark>
+    tags = {
+    Name = "Cloudfront Distribution"
+    Environment = "Dev"
+    }
+
+    <mark style="background-color: plum;"># Configure custom domain names</mark>
+    aliases = [
+    "jackieweng.com",
+    "resume.jackieweng.com",
+    "www.jackieweng.com"
+    ]
+}
+</pre></blockquote></b>
+							<p>This code successfully:
+								<ul><blockquote><li>Created a CloudFront distribution with secure S3 access through Origin Access Identity
+								<li>Configured caching behaviors and HTTPS enforcement</li>
+								<li>Set up basic distribution settings with IPv6 support</li></blockquote></ul>
+							However, although my Cloudfront deployment referenced an ACM certificate, it lacked the supporting infrastructure for SSL/TLS certification. This meant that I had to add IaC that would further configure my ACM certificate.
+
+							In response, this was the code I added to automatically obtain, update, and validate my SSL/TLS certificate via Terraform: 
+<b><blockquote><pre>
+<mark style="background-color: plum;"># Define AWS provider specifically for ACM in us-east-1 region (required for CloudFront certificates)</mark>
+provider "aws" {
+    alias  = "acm"
+    region = "us-east-1"  <mark style="background-color: plum;"># CloudFront requires certificates in us-east-1</mark>
+}
+
+<mark style="background-color: plum;"># Create SSL/TLS certificate through AWS Certificate Manager</mark>
+resource "aws_acm_certificate" "cert" {
+    provider = aws.acm  <mark style="background-color: plum;"># Use the us-east-1 provider defined above</mark>
+    domain_name = "jackieweng.com"  <mark style="background-color: plum;"># Primary domain for the certificate</mark>
+    subject_alternative_names = ["*.jackieweng.com"]  <mark style="background-color: plum;"># Wildcard subdomain support</mark>
+    validation_method = "DNS"  <mark style="background-color: plum;"># Use DNS validation instead of email</mark>
+    <mark style="background-color: plum;"># Ensure new certificate is created before destroying old one</mark>
+    lifecycle {
+    create_before_destroy = true
+    }
+}
+
+<mark style="background-color: plum;"></mark># Fetch existing Route53 hosted zone information</mark>
+data "aws_route53_zone" "primary" {
+    name = "jackieweng.com."  <mark style="background-color: plum;"># Domain name with trailing dot (DNS format)</mark>
+}
+
+<mark style="background-color: plum;"># Create DNS records for certificate validation</mark>
+resource "aws_route53_record" "cert_validation" {
+<mark style="background-color: plum;"># Create records for each domain validation option</mark>
+    for_each = {
+        <mark style="background-color: plum;"># Transform validation options into a map for easier handling</mark>
+        for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+        name   = dvo.resource_record_name
+        record = dvo.resource_record_value
+        type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true  <mark style="background-color: plum;"># Allow updating existing records</mark>
+  name            = each.value.name  <mark style="background-color: plum;"># DNS record name</mark>
+  records         = [each.value.record]  <mark style="background-color: plum;"># DNS record value</mark>
+  ttl             = 60  <mark style="background-color: plum;"># Time-to-live in seconds</mark>
+  type            = each.value.type  <mark style="background-color: plum;"># DNS record type</mark>
+  zone_id         = data.aws_route53_zone.primary.zone_id  <mark style="background-color: plum;"># Route53 zone ID</mark>
+}</pre></blockquote></b>
+
+<p>After testing the deployment, my additional code for ACM successfully:
+	<ul><blockquote><li>Created and configured an SSL/TLS certificate in the required us-east-1 region for CloudFront using AWS Certificate Manager
+	<li>Set up certificate coverage for both the main domain and all subdomains (*.jackieweng.com)</li>
+	<li>Configured automatic DNS validation through Route53 by:
+		<ul><li>Fetching the existing Route53 zone information</li>
+		<li>Creating necessary DNS validation records</li>
+		<li>Setting up automatic certificate renewal through lifecycle policy</li></ul>
+	</blockquote></ul>
+
+Overall, my configuration ensured secure HTTPS access to the website through proper SSL/TLS certification with an automated validation and renewal processes.
+<br><br>
+<h2>Phase 4: Creating a Basic View Counter Using DynamoDB & Lambda</h2>
+At this point, my cloud resume seemed to near completion. However, for the challenge, my site still needed a view counter. This meant IaC that could create and initialize a DynamoDB database, along with subsequent IaC to produce a simple Lambda function that would update this database when called via its function URL. 
+Amazon DynamoDB is a fully managed, serverless, key-value NoSQL database service that features scalability and built-in security. For this project, my database would contain only a single String key ID paired with a Number value to represent the site's viewer count. 
+Meanwhile, AWS Lambda is a serverless compute service for running code without having to provision resources. This project's Lambda function used Python as its language, since the AWS SDK for Python (AKA Boto3) provided a conveniently built-in Python API. 
+<br><br>
+I began with the following DynamoDB IaC:
+<b><blockquote><pre>
+<mark style="background-color: plum;"># Create a DynamoDB table for storing visitor count</mark>
+resource "aws_dynamodb_table" "resume_table" {
+    <mark style="background-color: plum;"># Set the table name</mark>
+    name           = "[redacted]"
+    <mark style="background-color: plum;"># Use on-demand pricing instead of provisioned capacity</mark>
+    billing_mode   = "PAY_PER_REQUEST"
+    <mark style="background-color: plum;"># Define primary key field name</mark>
+    hash_key       = "id"
+
+    <mark style="background-color: plum;"># Define the primary key attribute</mark>
+    attribute {
+        name = "id"
+        type = "S"  <mark style="background-color: plum;"># String type to match Lambda function's data type</mark>
+    }
+}
+
+<mark style="background-color: plum;"># Initialize the table with a counter item</mark>
+resource "aws_dynamodb_table_item" "counter" {
+    <mark style="background-color: plum;"># Reference the table we created above</mark>
+    table_name = aws_dynamodb_table.resume_table.name
+    <mark style="background-color: plum;"># Reference the primary key field</mark>
+    hash_key   = aws_dynamodb_table.resume_table.hash_key
+
+    <mark style="background-color: plum;"># Create initial item with id and view count</mark>
+    item = jsonencode({
+        "id"    = {"S": "1"}    <mark style="background-color: plum;"># Primary key value as string</mark>
+        "views" = {"N": "0"}   <mark style="background-color: plum;"># Initial view count as number</mark>
+    })
+}</pre></blockquote></b>
+
+This code successfully created a DynamoDB table with pay-per-request billing and initialized it with a counter item for tracking website views.
+<br><br>
+Now, onto the Lambda function's code. First, I created this Python function in a file named "func.py":
+<b><blockquote><pre>
+import json
+import boto3
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('[redacted]')
+def lambda_handler(event, context):
+    response = table.get_item(Key={
+        'id':'1'
+    })
+    views = response['Item']['views']
+    views = views + 1
+    print(views)
+    response = table.put_item(Item={
+            'id':'1',
+            'views':views
+    })
+
+    return views</pre></blockquote></b>
+
+This very basic Python Lambda function:
+<ul><blockquote><li>Connected to the DynamoDB table '[redacted]'</li>
+<li>Retrieved the current view count using id '1'</li>
+<li>Incremented the view count by 1</li>
+<li>Updated the DynamoDB table with the new count</li>
+<li>Printed the updated view count for logging</li></blockquote></ul>
+Overall, the code served as a visitor counter for the static website, updating the view count in DynamoDB each time the Lambda function was triggered. 
+
+Subsequently, I then had to also write the following IaC:
+<b><blockquote><pre><mark style="background-color: plum;"># Create a ZIP archive of the Lambda function code</mark>
+data "archive_file" "zip" {
+    type        = "zip"                           <mark style="background-color: plum;"># Specify archive type</mark>
+    source_dir  = "${path.module}/lambda/"        <mark style="background-color: plum;"># Directory containing Lambda code</mark>
+    output_path = "${path.module}/packedlambda.zip"  <mark style="background-color: plum;"># Where to save the ZIP file</mark>
+}
+
+<mark style="background-color: plum;"># Create the Lambda function using the zipped code</mark>
+resource "aws_lambda_function" "myfunc" {
+    filename         = data.archive_file.zip.output_path    <mark style="background-color: plum;"># Path to the ZIP file</mark>
+    source_code_hash = data.archive_file.zip.output_base64sha256  <mark style="background-color: plum;"># For detecting code changes</mark>
+    function_name    = "myfunc"                            <mark style="background-color: plum;"># Name of the Lambda function</mark>
+    role            = aws_iam_role.iam_for_lambda.arn      <mark style="background-color: plum;"># IAM role for permissions</mark>
+    handler         = "func.lambda_handler"                <mark style="background-color: plum;"># Function entry point</mark>
+    runtime         = "python3.8"                         <mark style="background-color: plum;"># Python version to use</mark>
+}</pre></blockquote></b>
+
+This added IaC which:
+<ul><blockquote><li>Created a ZIP archive of the Python code in the lambda directory, which was necessary to pack it into the Lambda function</li>
+<li>Created an AWS Lambda function using the zipped code</li>
+<li>Configured the function with basic settings including name, runtime, and IAM role</li>
+<li>Set up change detection through source code hashing</li></blockquote></ul>
+
+You may have noticed that the Lambda IaC included an IAM role configuration. IAM refers to AWS Identity and Access Management (IAM), which is a web service that allows administrators to control access to Amazon Web Services (AWS) resources and services. In this case, IAM roles needed to be assigned so that the DynamoDB database and Lambda function could reciprocatively communicate between one another. However, for security purposes, these IAM roles would need the least privilege necessary.
+<br><br>
+With this being the case, the following IaC consisted solely of the minimum IAM role policy configurations for the Lambda function and DynamoDB database:
+<b><blockquote><pre><mark style="background-color: plum;">
+# Create IAM role for Lambda function</mark>
+resource "aws_iam_role" "iam_for_lambda" {
+  name = "iam_for_lambda"  <mark style="background-color: plum;"># Name of the IAM role</mark>
+
+  <mark style="background-color: plum;"># Define trust policy allowing Lambda to assume this role</mark>
+  assume_role_policy = &lt&ltEOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",      <mark style="background-color: plum;"># Allow role assumption</mark>
+      "Principal": {
+        "Service": "lambda.amazonaws.com"  <mark style="background-color: plum;"># Lambda service can assume this role</mark>
+      },
+      "Effect": "Allow",
+      "Sid": ""                        <mark style="background-color: plum;"># Statement identifier (optional)</mark>
+    }
+  ]
+}
+EOF
+}
+
+<mark style="background-color: plum;"># Create custom IAM policy for Lambda permissions</mark>
+resource "aws_iam_policy" "iam_policy_for_resume_project" {
+  name        = "aws_iam_policy_for_terraform_resume_project"
+  path        = "/"                    <mark style="background-color: plum;"># Policy path in IAM</mark>
+  description = "AWS IAM Policy for managing the resume project role"
+  
+  <mark style="background-color: plum;"># Define policy permissions using jsonencode</mark>
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [                     <mark style="background-color: plum;"># CloudWatch Logs permissions</mark>
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "arn:aws:logs:*:*:*"  <mark style="background-color: plum;"># Apply to all log groups</mark>
+        Effect   = "Allow"
+      },
+      {
+        Effect = "Allow"
+        Action = [                     <mark style="background-color: plum;"># DynamoDB permissions</mark>
+          "dynamodb:UpdateItem",
+          "dynamodb:GetItem"
+        ]
+        Resource = "arn:aws:dynamodb:*:*:table/terraformed_cloudresume_test"
+      }
+    ]
+  })
+}
+
+<mark style="background-color: plum;"># Attach custom policy to Lambda role</mark>
+resource "aws_iam_role_policy_attachment" "lambda_policy" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.iam_policy_for_resume_project.arn
+}
+
+<mark style="background-color: plum;"># Attach DynamoDB full access policy to Lambda role</mark>
+resource "aws_iam_role_policy_attachment" "lambda_dynamodb_full_access" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+<mark style="background-color: plum;"># Create function URL for Lambda with CORS settings</mark>
+resource "aws_lambda_function_url" "url1" {
+  function_name      = aws_lambda_function.myfunc.function_name
+  authorization_type = "NONE"          <mark style="background-color: plum;"># Public access</mark>
+
+  <mark style="background-color: plum;"># Configure CORS for specific domains</mark>
+  cors {
+    allow_credentials = false
+    allow_origins = [                  <mark style="background-color: plum;"># Allowed domain names</mark>
+      "https://resume.jackieweng.com",
+      "https://jackieweng.com",
+      "https://www.jackieweng.com"
+    ]
+    allow_methods  = ["GET"]            <mark style="background-color: plum;"># Allow only the GET HTTP method</mark>
+    allow_headers  = ["content-type"]
+    max_age        = 86400           <mark style="background-color: plum;"># CORS cache duration</mark>
+  }
+}</pre></blockquote></b>
+
+This code created the necessary IAM permissions, configurations, and policies by:
+<ul><blockquote><li>Creating an IAM role that Lambda can assume</li>
+<li>Defining custom permissions for CloudWatch Logs and DynamoDB</li>
+<li>Attaching both custom and full DynamoDB access policies</li>
+<li>Creating a public function URL with CORS configuration for specific domains</li></blockquote></ul>
+
+Once I completed all of the above, only then did I insert a class called 'counter-number' within the HTML of my website's header, assigning it to the variable 'counter' in my Javascript. Likewise, I created an asynchronous Javascript function called 'updateCounter()'.
+<br><br>
+Here is the code for my view counter:
+<b><blockquote><pre>		
+  const counter = document.querySelector(".counter-number");
+
+  async function updateCounter() {
+  // Only update counter if we're on index.html
+  if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+    try {
+      let response = await fetch("https://3mrygkjnlpfiequ4kmzahp2qvu0fjnmd.lambda-url.us-east-2.on.aws/");
+      let data = await response.json();
+      console.log("API Response:", data);
+      
+      if (data.body) {
+        const views = typeof data.body === 'string' ? JSON.parse(data.body).views : data.body.views;
+        counter.innerHTML = views;
+      } else if (data.views) {
+        counter.innerHTML = data.views;
+      } else {
+        counter.innerHTML = data;
+      }
+    } catch (error) {
+      console.error("Error updating counter:", error);
+      counter.innerHTML = "0";
+    }
+  }
+}
+
+// Only call updateCounter if the counter element exists
+if (counter) {
+  updateCounter();
+}</pre></blockquote></b>
+
+This JavaScript code:
+<blockquote>1. Updated the visitor counter on the index page by:
+    <ul><li>Making an async fetch request to the Lambda function URL</li>
+    <li>Parsing the response to extract the view count</li>
+    <li>Displaying the count in an HTML element</li></ul>
+2. Included error handling and validation:
+    <ul><li>Only runs on index.html or root path</li>
+    <li>Checks for different response formats</li>
+    <li>Falls back to "0" if an error occurs</li>
+    <li>Only executes if the counter element exists on the page</li></ul></blockquote>
+Overall, the code worked in conjunction with the Lambda function defined in the Terraform configuration to track and display website visits.
+<br><br>
+This marked the end of Phase 4, and the full completion of my website's IaC. With the entire website Terraformed, I could finalize my project with CI/CD (continuous integration/continuous deployment) via Github Actions.
+<br><br>
+<h2>Phase 5: Continuous Integration/Continuous Deployment Using Github Actions</h2>
+
+Although applying local changes to my website via Terraform seemed to be sufficient, Github served as an extra backup for version control. This last phase aimed to push my site's modifications through Github Actions, thereby dynamically uploading my site's files to S3.
+
+<br><br>To do so, I created a folder path named ".github\workflows" in the root directory of my website. Then, I created a file called "CI_CD.yml" and housed it inside this new directory. "CI_CD.yml" contained the configuration for Github Actions, in particular a useful open-source Action by Jake Jarvis that syncs any directory to a remote S3 bucket.<br><br>  
+
+The following is the code I placed in "CI_CD.yml":
+<b><blockquote><pre>
+  name: 'CI/CD'
+
+  on:
+    push:
+      branches:
+        - "main"
+    pull_request:
+  
+  jobs:
+    deploy:
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      steps:
+        - uses: actions/checkout@v3
+        - uses: jakejarvis/s3-sync-action@master
+          with:
+            args: --acl public-read --follow-symlinks --delete
+          env:
+            AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_REGION: 'us-east-2'
+            SOURCE_DIR: 'website'</pre></blockquote></b>
+
+You may have noticed the redaction of certain AWS variables within the environment. My sensitive environment variables, which included AWS_S3_BUCKET, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY, were provided/encrypted through GitHub Secrets. 
+
+<br><br>These were the steps I took to define my prerequisite, sensitive environment variables:
+<b><blockquote><pre>
+1.) Navigate to the settings of the GitHub repository.
+2.) Select “Secrets and variables” from the left sidebar, under "Security"
+3.) Click on "Actions".
+4.) Click on “New repository secret”.
+5.) Assign the variable name for the secret, e.g. “AWS_SECRET_ACCESS_KEY”.
+6.) Input the corresponding value for the secret, e.g. the actual secret access key for your administrative account.
+7.) Repeat steps 4 to 6 for the other secret environment variables, then save your secrets.
+</pre></blockquote></b>
+
+By incorporating these secret environment variables in the repository's settings, GitHub Actions obtained the necessary encrypted credentials required to execute the CI/CD workflow.
+
+<br><br>
+<h2>Conclusion</h2>
+With Phase 5 completed, this finally marked the end of my entire cloud resume project. In retrospect, there were a few minor oversights throughout my site's development. For example, although my "main.tf" infrastructure was thoroughly sectioned by comments, it may have been better to simply separate each cloud service's IaC into multiple .tf files aptly named "S3", "Cloudfront", "Lambda", "DynamoDB", etc. Furthermore, the Lambda function's conditionals can be improved so that it only increments its view count for first-time visitors and/or time-based sessions.
+
+<br><br>Overall, however, I firmly believe that this challenge greatly honed my skills, acting as a passionate conduit that transmitted my theoretical knowledge into actual fruition. Thank you for giving your invaluable time towards reading this article, and I wish you the best of luck in your future endeavors, as is the case with mine!
+
+<br><br>
+
+<h2>Works Cited</h2>
+<b><pre>
+Brazeal, F. (2022, August 12). Terraform your cloud resume challenge. The Cloud 
+    Resume Challenge. https://cloudresumechallenge.dev/docs/extensions/  
+    terraform-getting-started/</pre></b>
+
+
+						</div>
+        
+							
+
+							<ul class="actions special">
+								<li><a href="projects.html" class="button large">Back to Projects</a></li>
+							</ul>
+						</article>
+					</div>
+
+
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<ul class="iconsfooter">
+								<li><a href="mailto:jackietech@duck.com" class="icon fa-envelope fa-2x"><span class="label">Email</span></a></li>	
+								<li><a href="https://www.linkedin.com/in/jackie-w-28bb6817b?trk=public_profile_browsemap" target="_blank" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/jackieweng27" target="_blank" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+							</ul>  
+              <b><p style="text-align:center; font-size:16px">Unless otherwise noted, the content of this site is licensed under the <br>
+                <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).</a></p></b>
+						</section>
+						<!-- Scroll to Top Button -->
+						<button id="scrollBtn" title="Go to top">
+							<svg viewBox="0 0 24 24" width="24" height="24">
+								<path d="M12 3.5l-6 6h12z" fill="black"/>  <!-- Triangle filled black -->
+								<path d="M12 7.5v13" stroke="black" stroke-width="2" fill="none"/>  <!-- Stem -->
+							</svg>
+						</button>												
+					</footer>
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
+
+			
